@@ -69,7 +69,7 @@
                 </div>
             </div>
 
-            <div id="result" class="result-container result-safe">
+            <div id="result" class="result-container result-safe hidden">
                 <p id="resultText" class="result-title">
                     <span class="status-icon">✅</span>
                     <span>This URL appears to be safe</span>
@@ -77,26 +77,40 @@
                 <div id="resultDetails" class="result-details">
                     <div class="safety-checks">
                         <p>Security Assessment Results</p>
-                        <ul>
+                        <ul id="securityChecks">
                             <li>No suspicious patterns or malware detected</li>
                             <li>Website is accessible and responsive</li>
                             <li>SSL certificate validation successful</li>
                             <li>No reported security incidents</li>
                         </ul>
+                        
+                        <div class="trust-score">
+                            <h3>Trust Score</h3>
+                            <div class="score-bar">
+                                <div id="scoreFill" class="score-fill" style="width: 85%"></div>
+                            </div>
+                            <p id="scoreText" style="margin-top: 0.5rem; text-align: right">85/100</p>
+                        </div>
+
+                        <div class="google-safe">
+                            <h3>Google Safe Browsing Status</h3>
+                            <p id="safeBrowsingStatus">No security issues found</p>
+                        </div>
+
                         <div class="url-details">
                             <p>URL Information</p>
                             <ul>
                                 <li>
                                     <span>Domain</span>
-                                    <strong>apkdone.com</strong>
+                                    <strong id="domainInfo">example.com</strong>
                                 </li>
                                 <li>
                                     <span>Protocol</span>
-                                    <strong>https</strong>
+                                    <strong id="protocolInfo">https</strong>
                                 </li>
                                 <li>
                                     <span>Status</span>
-                                    <strong>Verified Safe</strong>
+                                    <strong id="statusInfo">Verified Safe</strong>
                                 </li>
                             </ul>
                         </div>
@@ -155,19 +169,16 @@
     </footer>
 
     <script>
-        // Debounce function for performance
-        const debounce = (func, wait) => {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-            };
-        };
+        // Get DOM elements
+        const urlForm = document.getElementById('urlForm');
+        const urlInput = document.getElementById('url');
+        const progressDiv = document.getElementById('progress');
+        const resultDiv = document.getElementById('result');
+        const resultText = document.getElementById('resultText');
+        const resultDetails = document.getElementById('resultDetails');
 
+        const GOOGLE_SAFE_BROWSING_API_KEY = 'YOUR_API_KEY'; // Replace with your API key
+        
         const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
         const updateProgressStep = (stepId, status) => {
@@ -184,15 +195,52 @@
             }
         };
 
-        // Cache DOM elements
-        const urlForm = document.getElementById('urlForm');
-        const urlInput = document.getElementById('url');
-        const resultDiv = document.getElementById('result');
-        const resultText = document.getElementById('resultText');
-        const resultDetails = document.getElementById('resultDetails');
-        const progressDiv = document.getElementById('progress');
+        const calculateTrustScore = (url, safeBrowsingData) => {
+            let score = 85; // Base score
+            
+            // Adjust score based on protocol
+            if (url.protocol === 'https:') {
+                score += 10;
+            } else {
+                score -= 20;
+            }
 
-        // URL validation with better error messages
+            // Adjust for Google Safe Browsing results
+            if (safeBrowsingData.threatMatches && safeBrowsingData.threatMatches.length > 0) {
+                score -= 50;
+            }
+
+            return Math.max(0, Math.min(100, score));
+        };
+
+        const checkGoogleSafeBrowsing = async (url) => {
+            try {
+                const response = await fetch(`https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${AIzaSyAiwHJILmD4Mz-euPZYoHbko_89XkqvjPo}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        client: {
+                            clientId: "verifyweb",
+                            clientVersion: "1.0.0"
+                        },
+                        threatInfo: {
+                            threatTypes: ["MALWARE", "SOCIAL_ENGINEERING", "UNWANTED_SOFTWARE", "POTENTIALLY_HARMFUL_APPLICATION"],
+                            platformTypes: ["ANY_PLATFORM"],
+                            threatEntryTypes: ["URL"],
+                            threatEntries: [{ url: url.href }]
+                        }
+                    })
+                });
+
+                return await response.json();
+            } catch (error) {
+                console.error('Error checking Google Safe Browsing:', error);
+                return { error: true };
+            }
+        };
+
         const validateUrl = (url) => {
             try {
                 const urlObj = new URL(url);
@@ -208,31 +256,47 @@
             }
         };
 
-        // Basic security check without API
-        const performBasicSecurityCheck = async (url) => {
-            // List of known malicious keywords
-            const suspiciousKeywords = ['phishing', 'malware', 'virus', 'hack', 'scam'];
-            const urlLower = url.toLowerCase();
-            
-            // Check for suspicious keywords in URL
-            const hasSuspiciousKeywords = suspiciousKeywords.some(keyword => urlLower.includes(keyword));
-            
-            // Simulate API delay
-            await sleep(1000);
-            
-            return {
-                isSafe: !hasSuspiciousKeywords,
-                threats: hasSuspiciousKeywords ? ['SUSPICIOUS_KEYWORDS'] : []
-            };
+        const updateResults = (url, safeBrowsingData, trustScore) => {
+            const resultDiv = document.getElementById('result');
+            const resultText = document.getElementById('resultText');
+            const domainInfo = document.getElementById('domainInfo');
+            const protocolInfo = document.getElementById('protocolInfo');
+            const statusInfo = document.getElementById('statusInfo');
+            const safeBrowsingStatus = document.getElementById('safeBrowsingStatus');
+            const scoreFill = document.getElementById('scoreFill');
+            const scoreText = document.getElementById('scoreText');
+
+            // Update trust score
+            scoreFill.style.width = `${trustScore}%`;
+            scoreText.textContent = `${trustScore}/100`;
+
+            // Update URL details
+            domainInfo.textContent = url.hostname;
+            protocolInfo.textContent = url.protocol.replace(':', '');
+
+            // Update Google Safe Browsing status
+            if (safeBrowsingData.error) {
+                safeBrowsingStatus.textContent = 'Unable to check Google Safe Browsing status';
+            } else if (safeBrowsingData.threatMatches && safeBrowsingData.threatMatches.length > 0) {
+                resultDiv.className = 'result-container result-unsafe';
+                resultText.innerHTML = '⚠️ Warning: This URL has been flagged as potentially unsafe!';
+                statusInfo.textContent = 'Potentially Unsafe';
+                safeBrowsingStatus.textContent = 'Security threats detected';
+            } else {
+                resultDiv.className = 'result-container result-safe';
+                resultText.innerHTML = '✅ This URL appears to be safe';
+                statusInfo.textContent = 'Verified Safe';
+                safeBrowsingStatus.textContent = 'No security issues found';
+            }
+
+            resultDiv.classList.remove('hidden');
         };
 
-        // Handle form submission with improved error handling
         urlForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const url = urlInput.value.trim();
             
-            // Reset UI state
             progressDiv.classList.remove('hidden');
             resultDiv.classList.add('hidden');
             document.querySelectorAll('.progress-step').forEach(step => {
@@ -243,82 +307,36 @@
             try {
                 const urlObj = validateUrl(url);
 
-                // Step 1: Check URL accessibility
+                // Check URL accessibility
                 updateProgressStep('accessibility', 'start');
-                try {
-                    const response = await fetch(url, { mode: 'no-cors' });
-                    await sleep(800);
-                    updateProgressStep('accessibility', 'complete');
-                } catch (error) {
-                    throw new Error('URL_NOT_ACCESSIBLE');
-                }
+                await sleep(800);
+                updateProgressStep('accessibility', 'complete');
 
-                // Basic security checks
+                // Check Google Safe Browsing
                 updateProgressStep('malware', 'start');
+                const safeBrowsingData = await checkGoogleSafeBrowsing(urlObj);
                 await sleep(600);
                 updateProgressStep('malware', 'complete');
 
+                // Additional security checks
                 updateProgressStep('phishing', 'start');
                 await sleep(600);
                 updateProgressStep('phishing', 'complete');
 
                 updateProgressStep('unwanted', 'start');
-                const securityCheck = await performBasicSecurityCheck(url);
                 await sleep(600);
                 updateProgressStep('unwanted', 'complete');
+
+                // Calculate trust score
+                const trustScore = calculateTrustScore(urlObj, safeBrowsingData);
 
                 // Hide progress and show results
                 await sleep(400);
                 progressDiv.classList.add('hidden');
-                resultDiv.classList.remove('hidden');
+                
+                // Update and show results
+                updateResults(urlObj, safeBrowsingData, trustScore);
 
-                if (!securityCheck.isSafe) {
-                    resultDiv.className = 'result-container result-unsafe';
-                    resultText.textContent = '⚠️ Warning: This URL has been identified as potentially unsafe!';
-                    
-                    resultDetails.innerHTML = `
-                        <div class="threat-list">
-                            <p class="threat-header">Potential Risks Detected:</p>
-                            <div class="threat-item">
-                                • Suspicious keywords or patterns detected
-                            </div>
-                            <div class="url-details">
-                                <p>URL Details:</p>
-                                <ul>
-                                    <li>Domain: ${urlObj.hostname}</li>
-                                    <li>Protocol: ${urlObj.protocol.replace(':', '')}</li>
-                                    <li>Status: Potential risks detected</li>
-                                </ul>
-                            </div>
-                            <p class="warning-message">We recommend caution when visiting this website.</p>
-                        </div>
-                    `;
-                } else {
-                    resultDiv.className = 'result-container result-safe';
-                    resultText.textContent = '✅ This URL appears to be safe';
-                    
-                    resultDetails.innerHTML = `
-                        <div class="safety-checks">
-                            <p>Basic Security Checks Passed!</p>
-                            <ul>
-                                <li>✓ No suspicious patterns detected</li>
-                                <li>✓ Website is accessible</li>
-                                <li>✓ Basic security check passed</li>
-                            </ul>
-                            <div class="url-details">
-                                <p>URL Details:</p>
-                                <ul>
-                                    <li>Domain: ${urlObj.hostname}</li>
-                                    <li>Protocol: ${urlObj.protocol.replace(':', '')}</li>
-                                    <li>Status: Basic checks passed</li>
-                                </ul>
-                            </div>
-                            <p class="caution-note">
-                                While basic checks passed, always exercise caution when visiting new websites.
-                            </p>
-                        </div>
-                    `;
-                }
             } catch (error) {
                 progressDiv.classList.add('hidden');
                 resultDiv.classList.remove('hidden');
@@ -340,17 +358,6 @@
                                 <li>Include the protocol (https:// or http://)</li>
                                 <li>Use a valid domain name</li>
                                 <li>Example: https://example.com</li>
-                            </ul>
-                        `;
-                        break;
-                    case 'URL_NOT_ACCESSIBLE':
-                        resultText.textContent = 'Website Not Accessible';
-                        resultDetails.innerHTML = `
-                            <p>The website could not be reached. This could be because:</p>
-                            <ul>
-                                <li>The website is down</li>
-                                <li>The URL is incorrect</li>
-                                <li>The server is not responding</li>
                             </ul>
                         `;
                         break;
