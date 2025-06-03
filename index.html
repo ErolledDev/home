@@ -70,53 +70,58 @@
             </div>
 
             <div id="result" class="result-container result-safe hidden">
-                <p id="resultText" class="result-title">
-                    <span class="status-icon">✅</span>
-                    <span>This URL appears to be safe</span>
-                </p>
-                <div id="resultDetails" class="result-details">
-                    <div class="safety-checks">
-                        <p>Security Assessment Results</p>
+                <div class="result-header">
+                    <p id="resultText" class="result-title">
+                        <span class="status-icon">✅</span>
+                        <span>This URL appears to be safe</span>
+                    </p>
+                </div>
+                <div class="result-content">
+                    <div class="result-section security-checks">
+                        <h3>Security Assessment</h3>
                         <ul id="securityChecks">
                             <li>No suspicious patterns or malware detected</li>
                             <li>Website is accessible and responsive</li>
                             <li>SSL certificate validation successful</li>
                             <li>No reported security incidents</li>
                         </ul>
-                        
-                        <div class="trust-score">
+                    </div>
+
+                    <div class="result-section">
+                        <div class="trust-score-container">
                             <h3>Trust Score</h3>
                             <div class="score-bar">
-                                <div id="scoreFill" class="score-fill" style="width: 85%"></div>
+                                <div id="scoreFill" class="score-fill" style="width: 95%"></div>
                             </div>
-                            <p id="scoreText" style="margin-top: 0.5rem; text-align: right">85/100</p>
+                            <p id="scoreText" style="margin-top: 0.5rem; text-align: right">95/100</p>
                         </div>
 
-                        <div class="google-safe">
+                        <div class="google-safe" style="margin-top: 1.5rem">
                             <h3>Google Safe Browsing Status</h3>
                             <p id="safeBrowsingStatus">No security issues found</p>
                         </div>
+                    </div>
 
-                        <div class="url-details">
-                            <p>URL Information</p>
-                            <ul>
-                                <li>
-                                    <span>Domain</span>
-                                    <strong id="domainInfo">example.com</strong>
-                                </li>
-                                <li>
-                                    <span>Protocol</span>
-                                    <strong id="protocolInfo">https</strong>
-                                </li>
-                                <li>
-                                    <span>Status</span>
-                                    <strong id="statusInfo">Verified Safe</strong>
-                                </li>
-                            </ul>
+                    <div class="result-section">
+                        <h3>URL Information</h3>
+                        <div class="url-info">
+                            <div class="url-info-item">
+                                <span class="url-info-label">Domain</span>
+                                <strong id="domainInfo" class="url-info-value">example.com</strong>
+                            </div>
+                            <div class="url-info-item">
+                                <span class="url-info-label">Protocol</span>
+                                <strong id="protocolInfo" class="url-info-value">https</strong>
+                            </div>
+                            <div class="url-info-item">
+                                <span class="url-info-label">Status</span>
+                                <strong id="statusInfo" class="url-info-value">Verified Safe</strong>
+                            </div>
                         </div>
-                        <p class="caution-note">
-                            While our checks indicate this website is safe, always exercise caution when sharing sensitive information online.
-                        </p>
+                    </div>
+
+                    <div class="caution-note">
+                        While our checks indicate this website is safe, always exercise caution when sharing sensitive information online.
                     </div>
                 </div>
             </div>
@@ -177,7 +182,7 @@
         const resultText = document.getElementById('resultText');
         const resultDetails = document.getElementById('resultDetails');
 
-        const GOOGLE_SAFE_BROWSING_API_KEY = 'YOUR_API_KEY'; // Replace with your API key
+        const GOOGLE_SAFE_BROWSING_API_KEY = 'AIzaSyAiwHJILmD4Mz-euPZYoHbko_89XkqvjPo'; // Replace with your API key
         
         const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -215,7 +220,7 @@
 
         const checkGoogleSafeBrowsing = async (url) => {
             try {
-                const response = await fetch(`https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${AIzaSyAiwHJILmD4Mz-euPZYoHbko_89XkqvjPo}`, {
+                const response = await fetch(`https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${GOOGLE_SAFE_BROWSING_API_KEY}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -279,12 +284,12 @@
                 safeBrowsingStatus.textContent = 'Unable to check Google Safe Browsing status';
             } else if (safeBrowsingData.threatMatches && safeBrowsingData.threatMatches.length > 0) {
                 resultDiv.className = 'result-container result-unsafe';
-                resultText.innerHTML = '⚠️ Warning: This URL has been flagged as potentially unsafe!';
+                resultText.innerHTML = '<span class="status-icon">⚠️</span><span>Warning: This URL has been flagged as potentially unsafe!</span>';
                 statusInfo.textContent = 'Potentially Unsafe';
                 safeBrowsingStatus.textContent = 'Security threats detected';
             } else {
                 resultDiv.className = 'result-container result-safe';
-                resultText.innerHTML = '✅ This URL appears to be safe';
+                resultText.innerHTML = '<span class="status-icon">✅</span><span>This URL appears to be safe</span>';
                 statusInfo.textContent = 'Verified Safe';
                 safeBrowsingStatus.textContent = 'No security issues found';
             }
