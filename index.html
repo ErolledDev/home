@@ -3,220 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="VerifyWeb - The trusted URL safety checker. Protect yourself from malicious websites, phishing attacks, and online threats.">
-    <meta name="keywords" content="URL checker, website safety, phishing protection, malware detection, online security">
-    <meta name="author" content="VerifyWeb">
-    <meta property="og:title" content="VerifyWeb - Secure URL Checker">
-    <meta property="og:description" content="Check if a website is safe before you visit. Protect yourself from online threats with our advanced URL safety checker.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://verifyweb.site">
-    <title>VerifyWeb - Advanced URL Safety Checker | Secure Web Browsing</title>
+    <title>URL Safety Checker</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="logo">
-                <span>🛡️</span>
-                <span>VerifyWeb</span>
-            </div>
-            <div class="nav-links">
-                <a href="#features">Features</a>
-                <a href="#about">About</a>
-            </div>
-        </nav>
-    </header>
-
     <main>
         <section class="hero">
-            <h1>Advanced URL Safety Checker</h1>
-            <p>Protect yourself online with VerifyWeb. Verify website safety before visiting unknown links.</p>
-            
+            <h1>Check Website Safety</h1>
             <form id="urlForm" class="search-container">
                 <div class="input-wrapper">
-                    <span class="search-icon">🔍</span>
                     <input type="url" id="url" required
                         class="url-input"
-                        placeholder="Enter a website URL (e.g., https://example.com)"
+                        placeholder="Enter website URL (e.g., https://example.com)"
                         aria-label="URL to check">
-                    <button type="submit" class="submit-button">
-                        Verify Safety
-                    </button>
+                    <button type="submit" class="submit-button" id="submitButton">Check Safety</button>
                 </div>
-                <p class="input-hint">Include https:// or http:// in the URL</p>
             </form>
-
-            <div id="progress" class="progress-container hidden">
-                <div id="accessibility" class="progress-step">
-                    <div class="spinner hidden"></div>
-                    <p>Checking URL accessibility...</p>
-                    <span class="checkmark hidden">✓</span>
-                </div>
-                <div id="malware" class="progress-step">
-                    <div class="spinner hidden"></div>
-                    <p>Scanning for malware...</p>
-                    <span class="checkmark hidden">✓</span>
-                </div>
-                <div id="phishing" class="progress-step">
-                    <div class="spinner hidden"></div>
-                    <p>Detecting phishing threats...</p>
-                    <span class="checkmark hidden">✓</span>
-                </div>
-                <div id="unwanted" class="progress-step">
-                    <div class="spinner hidden"></div>
-                    <p>Checking for unwanted software...</p>
-                    <span class="checkmark hidden">✓</span>
-                </div>
-            </div>
 
             <div id="result" class="result-container result-safe hidden">
                 <div class="result-header">
-                    <p id="resultText" class="result-title">
-                        <span class="status-icon">✅</span>
-                        <span>This URL appears to be safe</span>
-                    </p>
+                    <p id="resultText" class="result-title"></p>
                 </div>
                 <div class="result-content">
-                    <div class="result-section security-checks">
-                        <h3>Security Assessment</h3>
-                        <ul id="securityChecks">
-                            <li>No suspicious patterns or malware detected</li>
-                            <li>Website is accessible and responsive</li>
-                            <li>SSL certificate validation successful</li>
-                            <li>No reported security incidents</li>
-                        </ul>
-                    </div>
-
                     <div class="result-section">
-                        <div class="trust-score-container">
-                            <h3>Trust Score</h3>
-                            <div class="score-bar">
-                                <div id="scoreFill" class="score-fill" style="width: 95%"></div>
-                            </div>
-                            <p id="scoreText" style="margin-top: 0.5rem; text-align: right">95/100</p>
-                        </div>
-
-                        <div class="google-safe" style="margin-top: 1.5rem">
-                            <h3>Google Safe Browsing Status</h3>
-                            <p id="safeBrowsingStatus">No security issues found</p>
-                        </div>
-                    </div>
-
-                    <div class="result-section">
-                        <h3>URL Information</h3>
+                        <h3>URL Analysis Results</h3>
                         <div class="url-info">
                             <div class="url-info-item">
                                 <span class="url-info-label">Domain</span>
-                                <strong id="domainInfo" class="url-info-value">example.com</strong>
+                                <strong id="domainInfo" class="url-info-value"></strong>
                             </div>
                             <div class="url-info-item">
                                 <span class="url-info-label">Protocol</span>
-                                <strong id="protocolInfo" class="url-info-value">https</strong>
+                                <strong id="protocolInfo" class="url-info-value"></strong>
                             </div>
                             <div class="url-info-item">
-                                <span class="url-info-label">Status</span>
-                                <strong id="statusInfo" class="url-info-value">Verified Safe</strong>
+                                <span class="url-info-label">Security Status</span>
+                                <strong id="statusInfo" class="url-info-value"></strong>
                             </div>
                         </div>
                     </div>
-
-                    <div class="caution-note">
-                        While our checks indicate this website is safe, always exercise caution when sharing sensitive information online.
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="features" class="features">
-            <div class="features-container">
-                <h2>How VerifyWeb Protects You</h2>
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <span class="feature-icon">🔍</span>
-                        <h3 class="feature-title">URL Verification</h3>
-                        <p class="feature-description">Real-time website accessibility and security checks</p>
-                    </div>
-                    <div class="feature-card">
-                        <span class="feature-icon">🛡️</span>
-                        <h3 class="feature-title">Malware Detection</h3>
-                        <p class="feature-description">Advanced scanning for malicious software and threats</p>
-                    </div>
-                    <div class="feature-card">
-                        <span class="feature-icon">⚠️</span>
-                        <h3 class="feature-title">Phishing Protection</h3>
-                        <p class="feature-description">Identify potential social engineering attacks</p>
-                    </div>
-                    <div class="feature-card">
-                        <span class="feature-icon">🔒</span>
-                        <h3 class="feature-title">Security Analysis</h3>
-                        <p class="feature-description">Comprehensive security assessment of websites</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="about" class="about">
-            <div class="about-container">
-                <h2>Why Choose VerifyWeb?</h2>
-                <p class="about-description">We use advanced security APIs and real-time checking to ensure your online safety.</p>
-                <div class="about-card">
-                    <h3 class="feature-title">Enterprise-Grade Security</h3>
-                    <p class="feature-description">Our service utilizes industry-leading security APIs to provide accurate and up-to-date threat detection.</p>
                 </div>
             </div>
         </section>
     </main>
 
-    <footer>
-        <div class="footer-content">
-            <p class="footer-text">© <script>document.write(new Date().getFullYear())</script> VerifyWeb. All rights reserved.</p>
-        </div>
-    </footer>
-
     <script>
-        // Get DOM elements
         const urlForm = document.getElementById('urlForm');
         const urlInput = document.getElementById('url');
-        const progressDiv = document.getElementById('progress');
         const resultDiv = document.getElementById('result');
         const resultText = document.getElementById('resultText');
-        const resultDetails = document.getElementById('resultDetails');
-
-        const GOOGLE_SAFE_BROWSING_API_KEY = 'AIzaSyAiwHJILmD4Mz-euPZYoHbko_89XkqvjPo'; // Replace with your API key
+        const submitButton = document.getElementById('submitButton');
         
-        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-        const updateProgressStep = (stepId, status) => {
-            const step = document.getElementById(stepId);
-            const spinner = step.querySelector('.spinner');
-            const checkmark = step.querySelector('.checkmark');
-            
-            if (status === 'start') {
-                spinner.classList.remove('hidden');
-                checkmark.classList.add('hidden');
-            } else if (status === 'complete') {
-                spinner.classList.add('hidden');
-                checkmark.classList.remove('hidden');
-            }
-        };
-
-        const calculateTrustScore = (url, safeBrowsingData) => {
-            let score = 85; // Base score
-            
-            // Adjust score based on protocol
-            if (url.protocol === 'https:') {
-                score += 10;
-            } else {
-                score -= 20;
-            }
-
-            // Adjust for Google Safe Browsing results
-            if (safeBrowsingData.threatMatches && safeBrowsingData.threatMatches.length > 0) {
-                score -= 50;
-            }
-
-            return Math.max(0, Math.min(100, score));
-        };
+        const GOOGLE_SAFE_BROWSING_API_KEY = 'AIzaSyAiwHJILmD4Mz-euPZYoHbko_89XkqvjPo';
 
         const checkGoogleSafeBrowsing = async (url) => {
             try {
@@ -250,139 +88,65 @@
             try {
                 const urlObj = new URL(url);
                 if (!['http:', 'https:'].includes(urlObj.protocol)) {
-                    throw new Error('URL must use HTTP or HTTPS protocol');
+                    throw new Error('Please use either HTTP or HTTPS protocol');
                 }
                 return urlObj;
             } catch (error) {
-                if (error.message.includes('Invalid URL')) {
-                    throw new Error('Please enter a valid website URL');
-                }
-                throw error;
+                throw new Error('Please enter a valid website URL');
             }
         };
 
-        const updateResults = (url, safeBrowsingData, trustScore) => {
+        const updateResults = (url, safeBrowsingData) => {
             const resultDiv = document.getElementById('result');
             const resultText = document.getElementById('resultText');
             const domainInfo = document.getElementById('domainInfo');
             const protocolInfo = document.getElementById('protocolInfo');
             const statusInfo = document.getElementById('statusInfo');
-            const safeBrowsingStatus = document.getElementById('safeBrowsingStatus');
-            const scoreFill = document.getElementById('scoreFill');
-            const scoreText = document.getElementById('scoreText');
 
-            // Update trust score
-            scoreFill.style.width = `${trustScore}%`;
-            scoreText.textContent = `${trustScore}/100`;
-
-            // Update URL details
             domainInfo.textContent = url.hostname;
             protocolInfo.textContent = url.protocol.replace(':', '');
 
-            // Update Google Safe Browsing status
-            if (safeBrowsingData.error) {
-                safeBrowsingStatus.textContent = 'Unable to check Google Safe Browsing status';
-            } else if (safeBrowsingData.threatMatches && safeBrowsingData.threatMatches.length > 0) {
-                resultDiv.className = 'result-container result-unsafe';
-                resultText.innerHTML = '<span class="status-icon">⚠️</span><span>Warning: This URL has been flagged as potentially unsafe!</span>';
-                statusInfo.textContent = 'Potentially Unsafe';
-                safeBrowsingStatus.textContent = 'Security threats detected';
-            } else {
-                resultDiv.className = 'result-container result-safe';
-                resultText.innerHTML = '<span class="status-icon">✅</span><span>This URL appears to be safe</span>';
-                statusInfo.textContent = 'Verified Safe';
-                safeBrowsingStatus.textContent = 'No security issues found';
-            }
-
             resultDiv.classList.remove('hidden');
+            // Trigger reflow for animation
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('visible');
+
+            if (safeBrowsingData.error) {
+                resultDiv.className = 'result-container result-warning visible';
+                resultText.innerHTML = '<span class="status-icon">⚠️</span><span>Unable to verify URL safety</span>';
+                statusInfo.textContent = 'Check Failed';
+            } else if (safeBrowsingData.threatMatches && safeBrowsingData.threatMatches.length > 0) {
+                resultDiv.className = 'result-container result-unsafe visible';
+                resultText.innerHTML = '<span class="status-icon">⚠️</span><span>Warning: This URL may be unsafe!</span>';
+                statusInfo.textContent = 'Potentially Unsafe';
+            } else {
+                resultDiv.className = 'result-container result-safe visible';
+                resultText.innerHTML = '<span class="status-icon">✅</span><span>This URL appears to be safe</span>';
+                statusInfo.textContent = 'Safe';
+            }
         };
 
         urlForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const url = urlInput.value.trim();
-            
-            progressDiv.classList.remove('hidden');
             resultDiv.classList.add('hidden');
-            document.querySelectorAll('.progress-step').forEach(step => {
-                step.querySelector('.spinner').classList.add('hidden');
-                step.querySelector('.checkmark').classList.add('hidden');
-            });
+            resultDiv.classList.remove('visible');
+            
+            submitButton.classList.add('loading');
+            submitButton.disabled = true;
 
             try {
                 const urlObj = validateUrl(url);
-
-                // Check URL accessibility
-                updateProgressStep('accessibility', 'start');
-                await sleep(800);
-                updateProgressStep('accessibility', 'complete');
-
-                // Check Google Safe Browsing
-                updateProgressStep('malware', 'start');
                 const safeBrowsingData = await checkGoogleSafeBrowsing(urlObj);
-                await sleep(600);
-                updateProgressStep('malware', 'complete');
-
-                // Additional security checks
-                updateProgressStep('phishing', 'start');
-                await sleep(600);
-                updateProgressStep('phishing', 'complete');
-
-                updateProgressStep('unwanted', 'start');
-                await sleep(600);
-                updateProgressStep('unwanted', 'complete');
-
-                // Calculate trust score
-                const trustScore = calculateTrustScore(urlObj, safeBrowsingData);
-
-                // Hide progress and show results
-                await sleep(400);
-                progressDiv.classList.add('hidden');
-                
-                // Update and show results
-                updateResults(urlObj, safeBrowsingData, trustScore);
-
+                updateResults(urlObj, safeBrowsingData);
             } catch (error) {
-                progressDiv.classList.add('hidden');
                 resultDiv.classList.remove('hidden');
-                resultDiv.className = 'result-container result-warning';
-                
-                switch(error.message) {
-                    case 'URL must use HTTP or HTTPS protocol':
-                        resultText.textContent = 'Invalid Protocol';
-                        resultDetails.innerHTML = `
-                            <p>Please use either HTTP or HTTPS protocol.</p>
-                            <p>Example: https://example.com</p>
-                        `;
-                        break;
-                    case 'Please enter a valid website URL':
-                        resultText.textContent = 'Invalid URL Format';
-                        resultDetails.innerHTML = `
-                            <p>The URL format is invalid. Please ensure:</p>
-                            <ul>
-                                <li>Include the protocol (https:// or http://)</li>
-                                <li>Use a valid domain name</li>
-                                <li>Example: https://example.com</li>
-                            </ul>
-                        `;
-                        break;
-                    default:
-                        resultText.textContent = 'Error Checking URL';
-                        resultDetails.innerHTML = `
-                            <p>An error occurred while checking the URL. Please try again.</p>
-                        `;
-                }
+                resultDiv.className = 'result-container result-warning visible';
+                resultText.innerHTML = `<span class="status-icon">⚠️</span><span>${error.message}</span>`;
+            } finally {
+                submitButton.classList.remove('loading');
+                submitButton.disabled = false;
             }
-        });
-
-        // Smooth scroll for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
         });
     </script>
 </body>
